@@ -1,0 +1,132 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless AI Document Pipeline - S3, Lambda, DynamoDB, and SSM
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 256
+    Runtime: python3.11
+    Environment:
+      Variables:
+        OPENAI_API_KEY_PARAM: "/docupipeline/openai_api_key"
+
+Resources:
+  # 1. S3 Buckets
+  UploadBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: ['PUT', 'POST', 'GET']
+            AllowedOrigins: ['*'] # In production, restrict to your frontend domain
+            MaxAge: 3000
+
+  CleanTextBucket:
+    Type: AWS::S3::Bucket
+
+  # 2. DynamoDB Table
+  MetadataTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: document_id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  # 3. Lambda: Generate Presigned URL
+  GeneratePresignedUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/presign/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          UPLOAD_BUCKET: !Ref UploadBucket
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref UploadBucket
+      Events:
+        GetUrl:
+          Type: Api
+          Properties:
+            Path: /presigned-url
+            Method: get
+
+  # 4. Lambda: Text Extractor (Triggered by UploadBucket)
+  TextExtractorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/extractor/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          CLEAN_TEXT_BUCKET: !Ref CleanTextBucket
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref UploadBucket
+        - S3WritePolicy:
+            BucketName: !Ref CleanTextBucket
+      Events:
+        NewUploadEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref UploadBucket
+            Events: s3:ObjectCreated:*
+            Filter:
+              Filters:
+                - Name: suffix
+                  Value: .pdf
+
+  # 5. Lambda: AI Summarizer (Triggered by CleanTextBucket)
+  AISummarizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/summarizer/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          METADATA_TABLE: !Ref MetadataTable
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref CleanTextBucket
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MetadataTable
+        - SSMParameterReadPolicy:
+            ParameterName: "docupipeline/openai_api_key"
+
+  # 6. Lambda: Get Document Status (Triggered by API Gateway GET)
+  GetDocumentStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/status/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          METADATA_TABLE: !Ref MetadataTable
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref MetadataTable
+      Events:
+        GetStatus:
+          Type: Api
+          Properties:
+            Path: /documents/{id}
+            Method: get
+
+Outputs:
+  ApiEndpoint:
+    Description: "HTTP API Gateway endpoint URL"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+  UploadBucketName:
+    Description: "Name of the S3 upload bucket"
+    Value: !Ref UploadBucket
+  CleanTextBucketName:
+    Description: "Name of the S3 clean text bucket"
+    Value: !Ref CleanTextBucket
+  MetadataTableName:
+    Description: "Name of the DynamoDB metadata table"
+    Value: !Ref MetadataTable
