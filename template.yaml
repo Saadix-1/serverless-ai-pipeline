@@ -5,7 +5,7 @@ Description: Serverless AI Document Pipeline - S3, Lambda, DynamoDB, and SSM
 Globals:
   Function:
     Timeout: 60
-    MemorySize: 256
+    MemorySize: 256 
     Runtime: python3.11
     Environment:
       Variables:
