@@ -14,7 +14,7 @@
 ---
 
 ## 🏗️ Architecture
-
+ 
 ```
 User React App -> [Request Presigned URL] -> API Gateway (Lambda Presign)
                                                 | (returns upload url)
