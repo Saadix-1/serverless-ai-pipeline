@@ -101,10 +101,21 @@ Resources:
               Action:
                 - s3:GetObject
               Resource: "arn:aws:s3:::*"
-        - DynamoDBCrudPolicy:
-            TableName: !Ref MetadataTable
-        - SSMParameterReadPolicy:
-            ParameterName: "docupipeline/openai_api_key"
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:DeleteItem
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: !GetAtt MetadataTable.Arn
+            - Effect: Allow
+              Action:
+                - ssm:GetParameter
+                - ssm:GetParameters
+                - ssm:GetParametersByPath
+              Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/docupipeline/openai_api_key"
       Events:
         NewTextEvent:
           Type: S3
@@ -126,8 +137,13 @@ Resources:
         Variables:
           METADATA_TABLE: !Ref MetadataTable
       Policies:
-        - DynamoDBReadPolicy:
-            TableName: !Ref MetadataTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: !GetAtt MetadataTable.Arn
       Events:
         GetStatus:
           Type: Api
