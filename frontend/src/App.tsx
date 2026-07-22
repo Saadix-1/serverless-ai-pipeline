@@ -32,12 +32,11 @@ export default function App() {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [status, setStatus] = useState<'idle' | 'uploading' | 'processing' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [documentId, setDocumentId] = useState<string>('');
   const [result, setResult] = useState<DocumentResult | null>(null);
   const [progressStep, setProgressStep] = useState<string>('');
   
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingIntervalRef = useRef<any>(null);
+  const timeoutRef = useRef<any>(null);
 
   // Clean up timers on unmount
   useEffect(() => {
@@ -103,7 +102,6 @@ export default function App() {
       const { upload_url, key } = await response.json();
       // Extract document ID (the uuid portion)
       const docId = key.replace('uploads/', '').replace('.pdf', '');
-      setDocumentId(docId);
 
       // 2. Upload file directly to S3 bucket
       setProgressStep('Uploading PDF directly to S3 storage...');
@@ -177,7 +175,6 @@ export default function App() {
     setFile(null);
     setStatus('idle');
     setResult(null);
-    setDocumentId('');
     setProgressStep('');
     setErrorMessage('');
   };
