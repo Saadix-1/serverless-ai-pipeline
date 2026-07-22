@@ -47,8 +47,11 @@ Resources:
         Variables:
           UPLOAD_BUCKET: !Ref UploadBucket
       Policies:
-        - S3WritePolicy:
-            BucketName: "*"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource: "arn:aws:s3:::*"
       Events:
         GetUrl:
           Type: Api
@@ -66,10 +69,12 @@ Resources:
         Variables:
           CLEAN_TEXT_BUCKET: !Ref CleanTextBucket
       Policies:
-        - S3ReadPolicy:
-            BucketName: "*"
-        - S3WritePolicy:
-            BucketName: "*"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:PutObject
+              Resource: "arn:aws:s3:::*"
       Events:
         NewUploadEvent:
           Type: S3
@@ -91,8 +96,11 @@ Resources:
         Variables:
           METADATA_TABLE: !Ref MetadataTable
       Policies:
-        - S3ReadPolicy:
-            BucketName: "*"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource: "arn:aws:s3:::*"
         - DynamoDBCrudPolicy:
             TableName: !Ref MetadataTable
         - SSMParameterReadPolicy:
