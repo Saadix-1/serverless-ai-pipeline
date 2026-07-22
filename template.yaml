@@ -1,12 +1,12 @@
-AWSTemplateFormatVersion: '2010-09-09' 
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Serverless AI Document Pipeline - S3, Lambda, DynamoDB, and SSM
 
 Globals:
   Function:
     Timeout: 60
-    MemorySize: 256 
-    Runtime: python3.11
+    MemorySize: 256
+    Runtime: python3.9
     Environment:
       Variables:
         OPENAI_API_KEY_PARAM: "/docupipeline/openai_api_key"
@@ -48,7 +48,7 @@ Resources:
           UPLOAD_BUCKET: !Ref UploadBucket
       Policies:
         - S3WritePolicy:
-            BucketName: !Ref UploadBucket
+            BucketName: "*"
       Events:
         GetUrl:
           Type: Api
@@ -67,9 +67,9 @@ Resources:
           CLEAN_TEXT_BUCKET: !Ref CleanTextBucket
       Policies:
         - S3ReadPolicy:
-            BucketName: !Ref UploadBucket
+            BucketName: "*"
         - S3WritePolicy:
-            BucketName: !Ref CleanTextBucket
+            BucketName: "*"
       Events:
         NewUploadEvent:
           Type: S3
@@ -92,17 +92,27 @@ Resources:
           METADATA_TABLE: !Ref MetadataTable
       Policies:
         - S3ReadPolicy:
-            BucketName: !Ref CleanTextBucket
+            BucketName: "*"
         - DynamoDBCrudPolicy:
             TableName: !Ref MetadataTable
         - SSMParameterReadPolicy:
             ParameterName: "docupipeline/openai_api_key"
+      Events:
+        NewTextEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref CleanTextBucket
+            Events: s3:ObjectCreated:*
+            Filter:
+              Filters:
+                - Name: suffix
+                  Value: .txt
 
   # 6. Lambda: Get Document Status (Triggered by API Gateway GET)
   GetDocumentStatusFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: backend/status/ 
+      CodeUri: backend/status/
       Handler: app.lambda_handler
       Environment:
         Variables:
