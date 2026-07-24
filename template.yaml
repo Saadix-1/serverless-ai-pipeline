@@ -6,7 +6,7 @@ Globals:
   Function:
     Timeout: 60
     MemorySize: 256
-    Runtime: python3.9
+    Runtime: python3.12
     Environment:
       Variables:
         OPENAI_API_KEY_PARAM: "/docupipeline/openai_api_key"
@@ -21,7 +21,7 @@ Resources:
           - AllowedHeaders: ['*']
             AllowedMethods: ['PUT', 'POST', 'GET']
             AllowedOrigins: ['*'] # In production, restrict to your frontend domain
-            MaxAgeSeconds: 3000
+            MaxAge: 3000
 
   CleanTextBucket:
     Type: AWS::S3::Bucket
@@ -82,9 +82,10 @@ Resources:
             Bucket: !Ref UploadBucket
             Events: s3:ObjectCreated:*
             Filter:
-              Filters:
-                - Name: suffix
-                  Value: .pdf
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: .pdf
 
   # 5. Lambda: AI Summarizer (Triggered by CleanTextBucket)
   AISummarizerFunction:
@@ -123,9 +124,10 @@ Resources:
             Bucket: !Ref CleanTextBucket
             Events: s3:ObjectCreated:*
             Filter:
-              Filters:
-                - Name: suffix
-                  Value: .txt
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: .txt
 
   # 6. Lambda: Get Document Status (Triggered by API Gateway GET)
   GetDocumentStatusFunction:
