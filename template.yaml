@@ -21,7 +21,7 @@ Resources:
           - AllowedHeaders: ['*']
             AllowedMethods: ['PUT', 'POST', 'GET']
             AllowedOrigins: ['*'] # In production, restrict to your frontend domain
-            MaxAge: 3000
+            MaxAgeSeconds: 3000
 
   CleanTextBucket:
     Type: AWS::S3::Bucket
