@@ -6,7 +6,7 @@
 ![DynamoDB](https://img.shields.io/badge/Amazon_DynamoDB-4053D6?style=for-the-badge&logo=amazondynamodb&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) 
 ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
 
 **DocuSense.AI** is a cloud-native, serverless, event-driven document analysis pipeline. Users can upload a PDF document directly to an Amazon S3 bucket, triggering a chain of serverless AWS Lambda microservices that clean and extract the text, analyze the content using OpenAI's `gpt-4o-mini`, and index the summary metadata in Amazon DynamoDB for real-time querying.
