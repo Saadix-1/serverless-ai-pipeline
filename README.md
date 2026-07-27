@@ -1,4 +1,4 @@
-# DocuSense.AI — Serverless AI Document Pipeline
+# DocuSense.AI — Serverless AI Document Pipeline 
 
 ![AWS](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![Lambda](https://img.shields.io/badge/AWS_Lambda-FF9900?style=for-the-badge&logo=aws-lambda&logoColor=white)   
