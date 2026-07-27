@@ -9,7 +9,13 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) 
 ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
 
-**DocuSense.AI** is a cloud-native, serverless, event-driven document analysis pipeline. Users can upload a PDF document directly to an Amazon S3 bucket, triggering a chain of serverless AWS Lambda microservices that clean and extract the text, analyze the content using OpenAI's `gpt-4o-mini`, and index the summary metadata in Amazon DynamoDB for real-time querying.
+**DocuSense.AI** is a cloud-native, serverless, event-driven document analysis pipeline.
+
+<p align="center">
+  <img src="assets/dashboard.png" alt="DocuSense.AI Dashboard Preview" width="800">
+</p>
+
+Users can upload a PDF document directly to an Amazon S3 bucket, triggering a chain of serverless AWS Lambda microservices that clean and extract the text, analyze the content using OpenAI's `gpt-4o-mini`, and index the summary metadata in Amazon DynamoDB for real-time querying.
 
 ---
 
