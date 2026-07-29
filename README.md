@@ -12,7 +12,7 @@
 **DocuSense.AI** is a cloud-native, serverless, event-driven document analysis pipeline.
  
 <p align="center">
-  <img src="assets/dashboard.png" alt="DocuSense.AI Dashboard Preview" width="800">
+  <img src="assets/dashboard.png" alt="DocuSense.AI Dashboard Preview" width="800"> 
 </p>
 
 Users can upload a PDF document directly to an Amazon S3 bucket, triggering a chain of serverless AWS Lambda microservices that clean and extract the text, analyze the content using OpenAI's `gpt-4o-mini`, and index the summary metadata in Amazon DynamoDB for real-time querying.
