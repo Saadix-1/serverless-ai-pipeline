@@ -11,7 +11,7 @@
 
 **DocuSense.AI** is a cloud-native, serverless, event-driven document analysis pipeline.
  
-<p align="center"> 
+<p align="center">  
   <img src="assets/dashboard.png" alt="DocuSense.AI Dashboard Preview" width="800"> 
 </p>
 
