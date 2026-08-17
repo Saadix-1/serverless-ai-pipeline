@@ -10,7 +10,7 @@
 ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white) 
 
 **DocuSense.AI** is a cloud-native, serverless, event-driven document analysis pipeline.
- 
+  
 <p align="center">  
   <img src="assets/dashboard.png" alt="DocuSense.AI Dashboard Preview" width="800"> 
 </p>
